@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALTYN DASTARKHAN — Дәмнің жаңа деңгейі</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dark: #8B6914;
+    --black: #0A0A0A;
+    --black-2: #111111;
+    --black-3: #1A1A1A;
+    --white: #F5F0E8;
+    --red: #8B0000;
+    --glass: rgba(255,255,255,0.04);
+    --glass-border: rgba(201,168,76,0.2);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ─── CUSTOM CURSOR ─── */
+  #cursor {
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 99999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+    mix-blend-mode: difference;
+  }
+  #cursor-ring {
+    width: 40px; height: 40px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 99998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+    opacity: 0.6;
+  }
+  .cursor-hover #cursor { transform: translate(-50%,-50%) scale(2.5); }
+  .cursor-hover #cursor-ring { transform: translate(-50%,-50%) scale(1.5); opacity: 1; border-color: var(--gold-light); }
+
+  /* ─── LOADER ─── */
+  #loader {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--black);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+  #loader.hidden { opacity: 0; visibility: hidden; }
+  .loader-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem,6vw,4rem);
+    font-style: italic;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    animation: loaderPulse 1.5s ease-in-out infinite;
+  }
+  .loader-bar {
+    margin-top: 2rem;
+    width: 200px; height: 1px;
+    background: var(--black-3);
+    position: relative; overflow: hidden;
+  }
+  .loader-bar::after {
+    content: '';
+    position: absolute; top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    animation: loaderSlide 1.2s ease-in-out infinite;
+  }
+  @keyframes loaderPulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+  @keyframes loaderSlide { to{left:100%} }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 1.5rem 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: all 0.4s ease;
+  }
+  nav.scrolled {
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(20px);
+    padding: 1rem 5%;
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.6rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    position: relative;
+    transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--gold);
+    transition: width 0.4s ease;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-btn {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 0.6rem 1.8rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.4s ease;
+    position: relative; overflow: hidden;
+  }
+  .nav-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--gold);
+    transform: translateX(-101%);
+    transition: transform 0.4s ease;
+    z-index: -1;
+  }
+  .nav-btn:hover::before { transform: translateX(0); }
+  .nav-btn:hover { color: var(--black); }
+
+  /* hamburger */
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: none; z-index: 101; }
+  .hamburger span { display: block; width: 24px; height: 1px; background: var(--gold); transition: all 0.4s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  .mobile-menu {
+    display: none; position: fixed; inset: 0; z-index: 100;
+    background: rgba(10,10,10,0.98);
+    backdrop-filter: blur(30px);
+    flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--white); text-decoration: none; letter-spacing: 0.1em; transition: color 0.3s; }
+  .mobile-menu a:hover { color: var(--gold); }
+
+  /* ─── HERO ─── */
+  #hero {
+    height: 100vh; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(139,0,0,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.1) 0%, transparent 50%),
+      linear-gradient(135deg, #0A0A0A 0%, #1A0A00 50%, #0A0A0A 100%);
+  }
+  .hero-particles { position: absolute; inset: 0; overflow: hidden; }
+  .particle {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: float linear infinite;
+    opacity: 0;
+  }
+  @keyframes float {
+    0% { opacity: 0; transform: translateY(100vh) rotate(0deg); }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.4; }
+    100% { opacity: 0; transform: translateY(-10vh) rotate(720deg); }
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    animation: heroReveal 1.5s ease forwards;
+    animation-delay: 2.2s;
+    opacity: 0;
+  }
+  @keyframes heroReveal {
+    from { opacity:0; transform:translateY(40px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+  .hero-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+  .hero-title .line-1 { display: block; color: var(--white); }
+  .hero-title .line-2 {
+    display: block;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold-light), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    font-style: italic;
+  }
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    font-weight: 300;
+    color: rgba(245,240,232,0.6);
+    letter-spacing: 0.15em;
+    margin-bottom: 3rem;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 1rem;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--black);
+    padding: 1rem 3rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: none;
+    position: relative; overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 20px 60px rgba(201,168,76,0.4); }
+  .btn-primary:hover::after { opacity: 1; }
+  .btn-secondary {
+    border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold);
+    padding: 1rem 2.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: none;
+    transition: all 0.4s ease;
+  }
+  .btn-secondary:hover { background: rgba(201,168,76,0.1); border-color: var(--gold); }
+  .hero-scroll {
+    position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    opacity: 0; animation: heroReveal 1s ease forwards; animation-delay: 3.2s;
+  }
+  .hero-scroll span { font-size: 0.6rem; letter-spacing: 0.3em; color: rgba(201,168,76,0.6); text-transform: uppercase; }
+  .scroll-line { width: 1px; height: 50px; background: linear-gradient(to bottom, var(--gold), transparent); animation: scrollAnim 2s ease infinite; }
+  @keyframes scrollAnim { 0%,100%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} }
+
+  /* ─── SECTIONS ─── */
+  section { padding: 8rem 5%; }
+  .section-header { text-align: center; margin-bottom: 5rem; }
+  .section-tag {
+    font-size: 0.65rem; letter-spacing: 0.5em; text-transform: uppercase;
+    color: var(--gold); font-weight: 300; display: block; margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 700; line-height: 1.1;
+    color: var(--white);
+  }
+  .section-title em { color: var(--gold); font-style: italic; }
+  .section-line {
+    display: block; width: 60px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 1.5rem auto 0;
+  }
+
+  /* ─── MENU ─── */
+  #menu { background: var(--black-2); }
+  .filter-bar {
+    display: flex; justify-content: center; gap: 1rem;
+    flex-wrap: wrap; margin-bottom: 4rem;
+  }
+  .filter-btn {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: rgba(245,240,232,0.5);
+    padding: 0.6rem 2rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem; letter-spacing: 0.2em;
+    text-transform: uppercase; cursor: none;
+    transition: all 0.4s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--gold); color: var(--black);
+    border-color: var(--gold);
+  }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem; max-width: 1400px; margin: 0 auto;
+  }
+  .menu-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    cursor: none;
+  }
+  .menu-card:hover { transform: translateY(-8px); box-shadow: 0 30px 80px rgba(201,168,76,0.15); }
+  .menu-card-img {
+    width: 100%; height: 220px; object-fit: cover;
+    transition: transform 0.6s ease;
+    display: block;
+    background: var(--black-3);
+    position: relative; overflow: hidden;
+  }
+  .menu-card-img-wrap { overflow: hidden; position: relative; }
+  .menu-card-img-wrap::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(10,10,10,0.8));
+    z-index: 1;
+  }
+  .menu-card:hover .menu-img { transform: scale(1.08); }
+  .menu-img {
+    width: 100%; height: 220px; object-fit: cover;
+    transition: transform 0.6s ease;
+    font-size: 5rem; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--black-3), #1a1200);
+  }
+  .menu-emoji { font-size: 5rem; line-height: 220px; text-align: center; display: block; height: 220px; }
+  .menu-card-body { padding: 1.5rem; }
+  .menu-category {
+    font-size: 0.6rem; letter-spacing: 0.35em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem;
+  }
+  .menu-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; font-weight: 600; color: var(--white);
+    margin-bottom: 0.4rem;
+  }
+  .menu-desc { font-size: 0.8rem; color: rgba(245,240,232,0.5); line-height: 1.6; margin-bottom: 1.2rem; }
+  .menu-footer { display: flex; align-items: center; justify-content: space-between; }
+  .menu-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; color: var(--gold); font-weight: 700;
+  }
+  .menu-order {
+    background: transparent; border: 1px solid var(--gold);
+    color: var(--gold); padding: 0.4rem 1rem;
+    font-size: 0.65rem; letter-spacing: 0.2em;
+    text-transform: uppercase; cursor: none;
+    transition: all 0.3s;
+  }
+  .menu-order:hover { background: var(--gold); color: var(--black); }
+  .menu-card .hover-overlay {
+    position: absolute; inset: 0;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(10px);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 2rem; text-align: center;
+    opacity: 0; transition: opacity 0.4s;
+    z-index: 5;
+  }
+  .menu-card:hover .hover-overlay { opacity: 1; }
+  .overlay-title { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--gold); margin-bottom:1rem; }
+  .overlay-desc { font-size:0.85rem; color:rgba(245,240,232,0.8); line-height:1.7; margin-bottom:1.5rem; }
+  .overlay-price { font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold-light); }
+
+  /* ─── ABOUT ─── */
+  #about { background: var(--black); }
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: center; max-width: 1200px; margin: 0 auto;
+  }
+  .about-img-wrap {
+    position: relative;
+  }
+  .about-img-frame {
+    width: 100%; aspect-ratio: 3/4;
+    background: linear-gradient(135deg, #1a0f00, #2a1800);
+    border: 1px solid var(--glass-border);
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8rem;
+  }
+  .about-img-frame::before {
+    content: '';
+    position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: linear-gradient(135deg, var(--gold-dark), transparent, var(--gold));
+    z-index: -1;
+  }
+  .about-badge {
+    position: absolute; bottom: -1.5rem; right: -1.5rem;
+    width: 120px; height: 120px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--black);
+    font-family: 'Playfair Display', serif;
+  }
+  .about-badge .num { font-size: 2.2rem; font-weight: 900; line-height: 1; }
+  .about-badge .txt { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; }
+  .about-text-eyebrow { font-size:0.65rem; letter-spacing:0.4em; color:var(--gold); text-transform:uppercase; margin-bottom:1rem; }
+  .about-title { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,4vw,3rem); font-weight:700; color:var(--white); line-height:1.2; margin-bottom:1.5rem; }
+  .about-title em { color:var(--gold); font-style:italic; }
+  .about-body { font-size:0.9rem; line-height:1.9; color:rgba(245,240,232,0.6); margin-bottom:2rem; }
+  .chef-card {
+    display: flex; gap: 1.5rem; align-items: center;
+    padding: 1.5rem;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+  }
+  .chef-avatar {
+    width: 70px; height: 70px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; flex-shrink: 0;
+  }
+  .chef-name { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--white); }
+  .chef-role { font-size:0.7rem; color:var(--gold); letter-spacing:0.2em; text-transform:uppercase; }
+  .chef-bio { font-size:0.8rem; color:rgba(245,240,232,0.5); margin-top:0.3rem; }
+
+  /* ─── GALLERY ─── */
+  #gallery { background: var(--black-2); }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 200px);
+    gap: 0.8rem; max-width: 1400px; margin: 0 auto;
+  }
+  .gallery-item {
+    overflow: hidden; position: relative; cursor: none;
+    background: var(--black-3);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+  .gallery-item:nth-child(4) { grid-column: span 2; }
+  .gallery-emoji { font-size: 4rem; transition: transform 0.5s ease; }
+  .gallery-item:hover .gallery-emoji { transform: scale(1.15); }
+  .gallery-item::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(139,0,0,0.1));
+    opacity: 0; transition: opacity 0.4s; z-index: 1;
+  }
+  .gallery-item:hover::before { opacity: 1; }
+  .gallery-overlay {
+    position: absolute; inset: 0; background: rgba(10,10,10,0.7);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.4s; z-index: 2;
+  }
+  .gallery-item:hover .gallery-overlay { opacity: 1; }
+  .gallery-zoom {
+    width: 50px; height: 50px; border-radius: 50%;
+    border: 2px solid var(--gold); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold); font-size: 1.2rem; cursor: none;
+    transform: scale(0.5); transition: transform 0.4s;
+  }
+  .gallery-item:hover .gallery-zoom { transform: scale(1); }
+
+  /* ─── BOOKING / CTA ─── */
+  #booking-section {
+    background: linear-gradient(135deg, #0A0A0A 0%, #1a0800 50%, #0A0A0A 100%);
+    position: relative; overflow: hidden;
+    text-align: center;
+  }
+  #booking-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(201,168,76,0.08) 0%, transparent 70%);
+  }
+  .booking-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+  .booking-title { font-family:'Playfair Display',serif; font-size:clamp(2rem,5vw,3.5rem); font-weight:700; color:var(--white); margin-bottom:1rem; }
+  .booking-title em { color:var(--gold); font-style:italic; }
+  .booking-text { color:rgba(245,240,232,0.6); margin-bottom:3rem; font-size:0.95rem; line-height:1.8; }
+  .btn-book {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+    color: var(--black); padding: 1.2rem 4rem;
+    font-family:'Montserrat',sans-serif; font-size:0.8rem;
+    font-weight:600; letter-spacing:0.3em; text-transform:uppercase;
+    border:none; cursor:none; position:relative; overflow:hidden;
+    transition:transform 0.3s, box-shadow 0.3s;
+  }
+  .btn-book:hover { transform:translateY(-5px) scale(1.02); box-shadow:0 25px 80px rgba(201,168,76,0.5); }
+
+  /* ─── CONTACT ─── */
+  #contact { background: var(--black); }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; max-width: 1200px; margin: 0 auto; }
+  .contact-info h3 { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--gold); margin-bottom:2rem; }
+  .contact-item { display:flex; gap:1rem; margin-bottom:1.5rem; align-items:flex-start; }
+  .contact-icon { font-size:1.2rem; margin-top:0.1rem; }
+  .contact-label { font-size:0.65rem; color:var(--gold); letter-spacing:0.25em; text-transform:uppercase; margin-bottom:0.3rem; }
+  .contact-value { font-size:0.9rem; color:var(--white); }
+  .social-links { display:flex; gap:1rem; margin-top:2rem; }
+  .social-link {
+    width:44px; height:44px; border:1px solid var(--glass-border);
+    display:flex; align-items:center; justify-content:center;
+    color:rgba(245,240,232,0.6); text-decoration:none; font-size:1rem;
+    transition:all 0.3s; cursor:none;
+  }
+  .social-link:hover { border-color:var(--gold); color:var(--gold); background:rgba(201,168,76,0.1); }
+  .map-placeholder {
+    height: 350px;
+    background: linear-gradient(135deg, var(--black-3), #1a1200);
+    border: 1px solid var(--glass-border);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .map-placeholder::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(201,168,76,0.05) 40px, rgba(201,168,76,0.05) 41px),
+      repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(201,168,76,0.05) 40px, rgba(201,168,76,0.05) 41px);
+  }
+  .map-icon { font-size:3rem; z-index:1; }
+  .map-text { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--gold); margin-top:0.5rem; z-index:1; }
+  .map-sub { font-size:0.75rem; color:rgba(245,240,232,0.4); z-index:1; margin-top:0.3rem; }
+  .map-pin {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: mapPing 2s ease-in-out infinite;
+    font-size:2rem; z-index:2;
+  }
+  @keyframes mapPing {
+    0%,100%{transform:translate(-50%,-60%)} 50%{transform:translate(-50%,-70%)}
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--black-2);
+    border-top: 1px solid var(--glass-border);
+    padding: 3rem 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-logo { font-family:'Playfair Display',serif; font-style:italic; font-size:1.4rem; color:var(--gold); }
+  .footer-copy { font-size:0.75rem; color:rgba(245,240,232,0.3); letter-spacing:0.1em; }
+  .footer-links { display:flex; gap:2rem; }
+  .footer-links a { font-size:0.7rem; color:rgba(245,240,232,0.4); text-decoration:none; letter-spacing:0.15em; transition:color 0.3s; }
+  .footer-links a:hover { color:var(--gold); }
+
+  /* ─── POPUP ─── */
+  .popup-overlay {
+    position: fixed; inset: 0; z-index: 9000;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.4s, visibility 0.4s;
+    padding: 2rem;
+  }
+  .popup-overlay.open { opacity: 1; visibility: visible; }
+  .popup {
+    background: var(--black-2);
+    border: 1px solid var(--glass-border);
+    padding: 3rem; max-width: 500px; width: 100%;
+    position: relative;
+    transform: translateY(40px) scale(0.95);
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .popup-overlay.open .popup { transform: translateY(0) scale(1); }
+  .popup::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .popup-close {
+    position: absolute; top: 1.5rem; right: 1.5rem;
+    background: none; border: none; color: rgba(245,240,232,0.4);
+    font-size: 1.2rem; cursor: none; transition: color 0.3s;
+    line-height: 1;
+  }
+  .popup-close:hover { color: var(--gold); }
+  .popup-title { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--gold); margin-bottom:0.5rem; }
+  .popup-sub { font-size:0.8rem; color:rgba(245,240,232,0.4); margin-bottom:2.5rem; letter-spacing:0.1em; }
+  .form-group { margin-bottom:1.5rem; }
+  .form-label { display:block; font-size:0.65rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem; }
+  .form-input {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--glass-border);
+    color: var(--white);
+    padding: 0.9rem 1.2rem;
+    font-family:'Montserrat',sans-serif; font-size:0.85rem;
+    transition: border-color 0.3s;
+    outline: none;
+  }
+  .form-input:focus { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .btn-submit {
+    width: 100%;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--black); padding: 1rem;
+    font-family:'Montserrat',sans-serif; font-size:0.75rem;
+    font-weight:600; letter-spacing:0.3em; text-transform:uppercase;
+    border:none; cursor:none;
+    transition: transform 0.3s, box-shadow 0.3s; margin-top: 0.5rem;
+  }
+  .btn-submit:hover { transform:translateY(-2px); box-shadow:0 15px 40px rgba(201,168,76,0.3); }
+
+  /* ─── LIGHTBOX ─── */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 9500;
+    background: rgba(0,0,0,0.95); backdrop-filter: blur(20px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.4s, visibility 0.4s;
+  }
+  .lightbox.open { opacity: 1; visibility: visible; }
+  .lightbox-content {
+    font-size: 8rem;
+    transform: scale(0.5);
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    text-align: center;
+  }
+  .lightbox.open .lightbox-content { transform: scale(1); }
+  .lightbox-close {
+    position: absolute; top: 2rem; right: 2rem;
+    color: var(--white); font-size: 2rem;
+    cursor: none; background: none; border: none;
+    transition: color 0.3s;
+  }
+  .lightbox-close:hover { color: var(--gold); }
+
+  /* ─── REVEAL ANIMATIONS ─── */
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-left { opacity:0; transform:translateX(-40px); transition:opacity 0.8s ease, transform 0.8s ease; }
+  .reveal-left.visible { opacity:1; transform:translateX(0); }
+  .reveal-right { opacity:0; transform:translateX(40px); transition:opacity 0.8s ease, transform 0.8s ease; }
+  .reveal-right.visible { opacity:1; transform:translateX(0); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .nav-links, .nav-btn { display: none; }
+    .hamburger { display: flex; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .gallery-grid { grid-template-columns: repeat(2,1fr); grid-template-rows: auto; }
+    .gallery-item:nth-child(1) { grid-column:span 2; }
+    .gallery-item:nth-child(4) { grid-column:span 1; }
+    .menu-grid { grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); }
+    .form-row { grid-template-columns: 1fr; }
+    section { padding: 5rem 5%; }
+  }
+  @media (max-width: 600px) {
+    .gallery-grid { grid-template-columns: 1fr; }
+    .gallery-item:nth-child(1), .gallery-item:nth-child(4) { grid-column: span 1; }
+    footer { flex-direction: column; align-items: center; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+    .hero-cta { flex-direction: column; }
+  }
+
+  /* ─── GOLD DIVIDER ─── */
+  .gold-divider {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dark), var(--gold), var(--gold-dark), transparent);
+    opacity: 0.4;
+  }
+
+  /* Stats */
+  .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:2rem; max-width:900px; margin:4rem auto 0; text-align:center; }
+  .stat-num { font-family:'Playfair Display',serif; font-size:2.5rem; color:var(--gold); font-weight:900; }
+  .stat-label { font-size:0.65rem; color:rgba(245,240,232,0.4); letter-spacing:0.25em; text-transform:uppercase; margin-top:0.3rem; }
+  @media(max-width:600px){ .stats-row{grid-template-columns:repeat(2,1fr);} }
+
+  /* notification */
+  .notification {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 8000;
+    background: var(--black-2); border: 1px solid var(--gold);
+    padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    transform: translateX(200%);
+    transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    max-width: 300px;
+  }
+  .notification.show { transform: translateX(0); }
+  .notification-icon { font-size: 1.5rem; }
+  .notification-text { font-size: 0.8rem; color: var(--white); }
+  .notification-text strong { color: var(--gold); display: block; }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">Altyn Dastarkhan</div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notification" id="notification">
+  <div class="notification-icon">✓</div>
+  <div class="notification-text">
+    <strong>Сәтті жіберілді!</strong>
+    Бронь расталды. Жақында хабарласамыз.
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">Altyn Dastarkhan</a>
+  <ul class="nav-links">
+    <li><a href="#menu">Меню</a></li>
+    <li><a href="#about">Біз туралы</a></li>
+    <li><a href="#gallery">Галерея</a></li>
+    <li><a href="#contact">Байланыс</a></li>
+  </ul>
+  <button class="nav-btn" onclick="openPopup()">Бронь жасау</button>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#menu" onclick="toggleMenu()">Меню</a>
+  <a href="#about" onclick="toggleMenu()">Біз туралы</a>
+  <a href="#gallery" onclick="toggleMenu()">Галерея</a>
+  <a href="#contact" onclick="toggleMenu()">Байланыс</a>
+  <button class="btn-primary" onclick="openPopup(); toggleMenu()">Бронь жасау</button>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-particles" id="particles"></div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">— Алматы, Қазақстан —</p>
+    <h1 class="hero-title">
+      <span class="line-1">ALTYN</span>
+      <span class="line-2">Dastarkhan</span>
+    </h1>
+    <p class="hero-subtitle">Дәмнің жаңа деңгейі</p>
+    <div class="hero-cta">
+      <a href="#menu" class="btn-primary">Меню қарау</a>
+      <button class="btn-secondary" onclick="openPopup()">Бронь жасау</button>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>Төмен</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- STATS -->
+<div style="background:var(--black-2); padding:4rem 5%;">
+  <div class="stats-row reveal">
+    <div><div class="stat-num">12+</div><div class="stat-label">Жыл тәжірибе</div></div>
+    <div><div class="stat-num">200+</div><div class="stat-label">Тағам түрлері</div></div>
+    <div><div class="stat-num">50K+</div><div class="stat-label">Бақытты қонақтар</div></div>
+    <div><div class="stat-num">8</div><div class="stat-label">Марапаттар</div></div>
+  </div>
+</div>
+
+<div class="gold-divider"></div>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="section-header reveal">
+    <span class="section-tag">Біздің таңдауымыз</span>
+    <h2 class="section-title">Керемет <em>Меню</em></h2>
+    <span class="section-line"></span>
+  </div>
+
+  <div class="filter-bar reveal">
+    <button class="filter-btn active" onclick="filterMenu('all', this)">Барлығы</button>
+    <button class="filter-btn" onclick="filterMenu('main', this)">Негізгі тағам</button>
+    <button class="filter-btn" onclick="filterMenu('drink', this)">Сусындар</button>
+    <button class="filter-btn" onclick="filterMenu('dessert', this)">Десерт</button>
+  </div>
+
+  <div class="menu-grid" id="menuGrid">
+    <!-- JS-мен толтырылады -->
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-img-wrap reveal-left">
+      <div class="about-img-frame">🍽️</div>
+      <div class="about-badge">
+        <span class="num">12</span>
+        <span class="txt">Жыл</span>
+      </div>
+    </div>
+    <div class="reveal-right">
+      <p class="about-text-eyebrow">Біздің тарихымыз</p>
+      <h2 class="about-title">Дәстүр мен <em>қазіргі</em> заман үйлесімі</h2>
+      <p class="about-body">Altyn Dastarkhan — бұл тек ресторан емес, бұл тәжірибе. 2012 жылдан бері біз қазақтың бай дәстүрлі тағамдарын заманауи пісіру өнерімен ұштастырып, қонақтарымызға ерекше гастрономиялық саяхат ұсынып келеміз.</p>
+      <p class="about-body">Әрбір тағамымыз — жергілікті фермерлерден алынған таза өнімдер, шеф-поварымыздың жан жылуы және сізге деген құрметіміздің нышаны.</p>
+      <div class="chef-card">
+        <div class="chef-avatar">👨‍🍳</div>
+        <div>
+          <div class="chef-name">Асхат Бекенов</div>
+          <div class="chef-role">Бас шеф-повар</div>
+          <div class="chef-bio">Париж Le Cordon Bleu бітірген, 15 жылдық тәжірибесі бар</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="section-header reveal">
+    <span class="section-tag">Визуал тәжірибе</span>
+    <h2 class="section-title">Біздің <em>Галерея</em></h2>
+    <span class="section-line"></span>
+  </div>
+  <div class="gallery-grid reveal" id="galleryGrid">
+    <!-- JS-мен толтырылады -->
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- BOOKING CTA -->
+<section id="booking-section">
+  <div class="booking-content reveal">
+    <span class="section-tag">Сізді күтеміз</span>
+    <h2 class="booking-title">Ерекше <em>кешкі ас</em> сізді күтеді</h2>
+    <p class="booking-text">Жақындарыңызбен бірге керемет сәт өткізіңіз. Үстелді алдын ала брондаңыз және ерекше қызмет алыңыз.</p>
+    <button class="btn-book" onclick="openPopup()">Үстел брондау</button>
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header reveal">
+    <span class="section-tag">Хабарласыңыз</span>
+    <h2 class="section-title">Байланыс <em>ақпараты</em></h2>
+    <span class="section-line"></span>
+  </div>
+  <div class="contact-grid">
+    <div class="reveal-left">
+      <h3>Бізбен байланысыңыз</h3>
+      <div class="contact-item">
+        <div class="contact-icon">📍</div>
+        <div>
+          <div class="contact-label">Мекенжай</div>
+          <div class="contact-value">Алматы қ., Абай даңғылы 12<br>Медеу ауданы</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">📞</div>
+        <div>
+          <div class="contact-label">Телефон</div>
+          <div class="contact-value">+7 (727) 123-45-67<br>+7 (777) 987-65-43</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">🕐</div>
+        <div>
+          <div class="contact-label">Жұмыс уақыты</div>
+          <div class="contact-value">Дүйсенбі — Жексенбі<br>12:00 — 23:00</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">✉️</div>
+        <div>
+          <div class="contact-label">Email</div>
+          <div class="contact-value">info@altyndastarkhan.kz</div>
+        </div>
+      </div>
+      <div class="social-links">
+        <a class="social-link" title="Instagram">📸</a>
+        <a class="social-link" title="Facebook">📘</a>
+        <a class="social-link" title="WhatsApp">💬</a>
+        <a class="social-link" title="Telegram">✈️</a>
+      </div>
+    </div>
+    <div class="reveal-right">
+      <div class="map-placeholder">
+        <div class="map-pin">📍</div>
+        <div class="map-icon" style="opacity:0.2; position:absolute;">🗺️</div>
+        <div class="map-text">Altyn Dastarkhan</div>
+        <div class="map-sub">Абай даңғылы 12, Алматы</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Altyn Dastarkhan</div>
+  <p class="footer-copy">© 2024 Altyn Dastarkhan. Барлық құқықтар қорғалған.</p>
+  <div class="footer-links">
+    <a href="#menu">Меню</a>
+    <a href="#about">Туралы</a>
+    <a href="#contact">Байланыс</a>
+  </div>
+</footer>
+
+<!-- BOOKING POPUP -->
+<div class="popup-overlay" id="bookingPopup" onclick="closePopupOutside(event)">
+  <div class="popup">
+    <button class="popup-close" onclick="closePopup()">✕</button>
+    <h3 class="popup-title">Үстел брондау</h3>
+    <p class="popup-sub">Мәліметтерді толтырыңыз</p>
+    <div class="form-group">
+      <label class="form-label">Аты-жөніңіз</label>
+      <input type="text" class="form-input" placeholder="Мысалы: Айгерім Бекова">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Телефон</label>
+        <input type="tel" class="form-input" placeholder="+7 (___) ___-__-__">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Адамдар саны</label>
+        <input type="number" class="form-input" placeholder="2" min="1" max="20">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Күні</label>
+        <input type="date" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Уақыты</label>
+        <input type="time" class="form-input">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Ескертпе (қалауы бойынша)</label>
+      <input type="text" class="form-input" placeholder="Мерей тойы, арнайы тілек...">
+    </div>
+    <button class="btn-submit" onclick="submitBooking()">Брондауды Растау</button>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close">✕</button>
+  <div class="lightbox-content" id="lightboxContent"></div>
+</div>
+
+<script>
+// ─── DATA ───
+const menuItems = [
+  { id:1, cat:'main', name:'Бесбармақ', desc:'Дәстүрлі қазақ тағамы. Жұмсақ ет, жайпақ кеспе және сорпа.', price:'₸ 3 500', emoji:'🍖' },
+  { id:2, cat:'main', name:'Қуырдақ', desc:'Жас ет пен ішкі мүшелерден дайындалған классикалық тағам.', price:'₸ 2 800', emoji:'🥩' },
+  { id:3, cat:'main', name:'Манты', desc:'Ет толтырылған буда пісірілген жапсырмалар.', price:'₸ 2 200', emoji:'🥟' },
+  { id:4, cat:'main', name:'Самса', desc:'Ет немесе көкөніс толтырылған алтын нан.', price:'₸ 900', emoji:'🥐' },
+  { id:5, cat:'drink', name:'Қымыз', desc:'Биенің сүтінен дайындалған дәстүрлі ұлттық сусын.', price:'₸ 800', emoji:'🥛' },
+  { id:6, cat:'drink', name:'Шалап', desc:'Сорпа мен айранның үйлесімінен жасалған сергітуші сусын.', price:'₸ 600', emoji:'🍶' },
+  { id:7, cat:'drink', name:'Шай (қазақша)', desc:'Сүтпен деміделген хош иісті нағыз қазақ шайы.', price:'₸ 500', emoji:'🍵' },
+  { id:8, cat:'dessert', name:'Шертпек', desc:'Бал мен қаймақтан жасалған дәстүрлі тәтті.', price:'₸ 1 200', emoji:'🍯' },
+  { id:9, cat:'dessert', name:'Баурсақ', desc:'Алтын түсті қуырылған жұмсақ нан бөліктері.', price:'₸ 700', emoji:'🍞' },
+];
+
+const galleryItems = [
+  { emoji:'🍽️', label:'Безендіру' },
+  { emoji:'🥩', label:'Ет тағамдары' },
+  { emoji:'🍵', label:'Шай уақыты' },
+  { emoji:'🏮', label:'Интерьер' },
+  { emoji:'🥗', label:'Салаттар' },
+  { emoji:'🍰', label:'Десерттер' },
+  { emoji:'🎂', label:'Тойлар' },
+  { emoji:'👨‍🍳', label:'Шеф' },
+];
+
+// ─── RENDER MENU ───
+function renderMenu(filter='all') {
+  const grid = document.getElementById('menuGrid');
+  const items = filter === 'all' ? menuItems : menuItems.filter(i => i.cat === filter);
+  grid.innerHTML = items.map(item => `
+    <div class="menu-card reveal">
+      <div class="menu-card-img-wrap">
+        <div class="menu-img" style="height:220px; display:flex; align-items:center; justify-content:center;">
+          <span style="font-size:5rem;">${item.emoji}</span>
+        </div>
+      </div>
+      <div class="hover-overlay">
+        <div class="overlay-title">${item.name}</div>
+        <div class="overlay-desc">${item.desc}</div>
+        <div class="overlay-price">${item.price}</div>
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-category">${{main:'Негізгі тағам',drink:'Сусындар',dessert:'Десерт'}[item.cat]}</div>
+        <div class="menu-name">${item.name}</div>
+        <div class="menu-desc">${item.desc}</div>
+        <div class="menu-footer">
+          <span class="menu-price">${item.price}</span>
+          <button class="menu-order" onclick="addToOrder('${item.name}')">Тапсырыс</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  observeReveal();
+}
+
+function filterMenu(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMenu(cat);
+}
+
+function addToOrder(name) {
+  showNotif(`"${name}" себетке қосылды!`);
+}
+
+// ─── RENDER GALLERY ───
+function renderGallery() {
+  const grid = document.getElementById('galleryGrid');
+  grid.innerHTML = galleryItems.map((item, i) => `
+    <div class="gallery-item" onclick="openLightbox('${item.emoji}', '${item.label}')">
+      <span class="gallery-emoji">${item.emoji}</span>
+      <div class="gallery-overlay">
+        <button class="gallery-zoom">🔍</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── PARTICLES ───
+function createParticles() {
+  const container = document.getElementById('particles');
+  for(let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      width:${Math.random()*3+1}px;
+      height:${Math.random()*3+1}px;
+      animation-duration:${Math.random()*15+8}s;
+      animation-delay:${Math.random()*10}s;
+    `;
+    container.appendChild(p);
+  }
+}
+
+// ─── CURSOR ───
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0, my=0, rx=0, ry=0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx+'px';
+  cursor.style.top = my+'px';
+});
+
+function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx+'px';
+  ring.style.top = ry+'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+document.querySelectorAll('a,button,[class*="btn"]').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+});
+
+// ─── LOADER ───
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+    createParticles();
+    renderMenu();
+    renderGallery();
+    observeReveal();
+  }, 2000);
+});
+
+// ─── SCROLL ───
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+  observeReveal();
+});
+
+// ─── REVEAL ───
+function observeReveal() {
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if(rect.top < window.innerHeight * 0.88) {
+      el.classList.add('visible');
+    }
+  });
+}
+window.addEventListener('scroll', observeReveal);
+
+// ─── POPUP ───
+function openPopup() {
+  document.getElementById('bookingPopup').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closePopup() {
+  document.getElementById('bookingPopup').classList.remove('open');
+  document.body.style.overflow='';
+}
+function closePopupOutside(e) {
+  if(e.target === document.getElementById('bookingPopup')) closePopup();
+}
+function submitBooking() {
+  closePopup();
+  showNotif('Бронь сәтті жіберілді!');
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') { closePopup(); closeLightbox(); }});
+
+// ─── LIGHTBOX ───
+function openLightbox(emoji, label) {
+  document.getElementById('lightboxContent').innerHTML = `
+    <div style="font-size:8rem;">${emoji}</div>
+    <div style="font-family:'Playfair Display',serif; color:var(--gold); font-size:1.5rem; margin-top:1rem;">${label}</div>
+  `;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+// ─── MOBILE MENU ───
+function toggleMenu() {
+  document.getElementById('hamburger').classList.toggle('open');
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+// ─── NOTIFICATION ───
+function showNotif(msg) {
+  const n = document.getElementById('notification');
+  n.querySelector('strong').textContent = msg;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 3500);
+}
+
+// ─── CURSOR on dynamically added elements ───
+document.addEventListener('mouseenter', e => {
+  if(e.target.matches('a,button,[class*="btn"],.menu-card,.gallery-item,.social-link'))
+    document.body.classList.add('cursor-hover');
+}, true);
+document.addEventListener('mouseleave', e => {
+  if(e.target.matches('a,button,[class*="btn"],.menu-card,.gallery-item,.social-link'))
+    document.body.classList.remove('cursor-hover');
+}, true);
+</script>
+</body>
+</html>
